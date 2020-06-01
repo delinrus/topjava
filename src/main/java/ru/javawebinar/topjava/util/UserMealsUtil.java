@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.util;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExcess;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,22 +31,42 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> map = new HashMap<>();
         List<UserMealWithExcess> mealsWithExcess = new ArrayList<>();
-        List<UserMeal> filteredMeals = new ArrayList<>();
 
-        for (UserMeal meal : meals) {
-            map.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum);
-            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
-                filteredMeals.add(meal);
+        class Pair {
+            int caloriesSum;
+            final Boolean hasExcess;
+
+            public Pair(int caloriesSum, Boolean hasExcess) {
+                this.caloriesSum = caloriesSum;
+                this.hasExcess = hasExcess;
             }
         }
 
-        for (UserMeal meal : filteredMeals) {
-            int dayCalories = map.get(meal.getDateTime().toLocalDate());
-            mealsWithExcess.add(new UserMealWithExcess(meal, (dayCalories > caloriesPerDay)));
-        }
+        Map<LocalDate, Pair> map = new HashMap<>();
+        for (UserMeal meal : meals) {
+            LocalDate date = meal.getDateTime().toLocalDate();
+            Pair pair = map.getOrDefault(date, new Pair(0, new Boolean(false)));
+            pair.caloriesSum += meal.getCalories();
+            if (pair.caloriesSum > caloriesPerDay) {
 
+                // Changing by Reflection pair.hasExcess=true
+                try {
+                    Field field = pair.hasExcess.getClass().getDeclaredField("value");
+                    field.setAccessible(true);
+                    field.setBoolean(pair.hasExcess, true);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            map.put(date, pair);
+
+            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
+                mealsWithExcess.add( new UserMealWithExcess(meal, pair.hasExcess));
+            }
+        }
         return mealsWithExcess;
     }
 
