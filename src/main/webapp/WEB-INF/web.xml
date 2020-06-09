@@ -5,6 +5,7 @@
          version="4.0">
 
     <display-name>Topjava</display-name>
+    <request-character-encoding>UTF-8</request-character-encoding>
 
     <servlet>
         <servlet-name>userServlet</servlet-name>
@@ -23,6 +24,15 @@
     <servlet-mapping>
         <servlet-name>mealServlet</servlet-name>
         <url-pattern>/meals</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>mealController</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mealController</servlet-name>
+        <url-pattern>/mealcrud</url-pattern>
     </servlet-mapping>
 
 </web-app>

@@ -37,21 +37,29 @@
     <title>Meals</title>
 </head>
 <body>
-<H2>Meals</H2>
+<h3><a href="index.html">Home</a></h3>
+<hr>
 <table>
     <tr>
         <th>Date/Time</th>
         <th>Description</th>
         <th>Calories</th>
+        <th></th>
+        <th></th>
     </tr>
     <c:forEach var="meal" items="${mealsList}">
         <tr class="${meal.excess ? 'excessStyle' : 'nonExcessStyle'}">
             <td>${meal.dateTime.format(formatter)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
+            <td><a href="mealcrud?action=edit&mealId=${meal.id}">Edit</a></td>
+            <td><a href="mealcrud?action=delete&mealId=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
 <hr/>
+<form>
+    <input type="button" value="Add new" onClick='location.href="mealcrud?action=add"'>
+</form>
 </body>
 </html>
