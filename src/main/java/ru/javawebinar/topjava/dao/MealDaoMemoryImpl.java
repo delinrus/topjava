@@ -8,19 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MealDaoMemoryImpl implements MealDao {
+    private static final long NO_ID = 0L;
     private static MealDaoMemoryImpl instance;
     private final ConcurrentHashMap<Long, Meal> mealsMap = new ConcurrentHashMap<>();
+    private AtomicLong idCounter = new AtomicLong();
 
     {
-        mapInitHelper(2L, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500);
-        mapInitHelper(5L, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000);
-        mapInitHelper(6L, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500);
-        mapInitHelper(7L, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100);
-        mapInitHelper(8L, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000);
-        mapInitHelper(9L, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500);
-        mapInitHelper(10L, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410);
+        create(new Meal(NO_ID, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        create(new Meal(NO_ID, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        create(new Meal(NO_ID, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        create(new Meal(NO_ID, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        create(new Meal(NO_ID, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        create(new Meal(NO_ID, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        create(new Meal(NO_ID,  LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 
     private MealDaoMemoryImpl() {
@@ -30,27 +33,24 @@ public class MealDaoMemoryImpl implements MealDao {
         return instance = (instance == null) ? new MealDaoMemoryImpl() : instance;
     }
 
-    private void mapInitHelper(Long id, LocalDateTime dateTime, String description, int calories) {
-        mealsMap.put(id, new Meal(id, dateTime, description, calories));
-    }
-
     @Override
     public Meal get(Long id) {
         return mealsMap.get(id);
     }
 
     @Override
-    public void create(Meal meal) {
-        Long id = meal.getId();
-        while (mealsMap.containsKey(id)) {
-            id = ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE);
-        }
+    public Meal create(Meal meal) {
+        Long id = idCounter.incrementAndGet();
         mealsMap.put(id, new Meal(id, meal));
+        return meal;
     }
 
     @Override
-    public void update(Meal meal) {
-        mealsMap.replace(meal.getId(), meal);
+    public Meal update(Meal meal) {
+        if (mealsMap.replace(meal.getId(), meal) == null) {
+            return null;
+        }
+        return meal;
     }
 
     @Override

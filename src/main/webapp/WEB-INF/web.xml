@@ -20,19 +20,14 @@
     <servlet>
         <servlet-name>mealServlet</servlet-name>
         <servlet-class>ru.javawebinar.topjava.web.MealServlet</servlet-class>
+        <init-param>
+            <param-name>dateTimeFormat</param-name>
+            <param-value>yyyy-MM-dd HH:mm</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>mealServlet</servlet-name>
         <url-pattern>/meals</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>mealController</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.web.MealController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>mealController</servlet-name>
-        <url-pattern>/mealcrud</url-pattern>
     </servlet-mapping>
 
 </web-app>

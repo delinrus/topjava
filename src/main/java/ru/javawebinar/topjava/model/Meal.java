@@ -21,10 +21,7 @@ public class Meal {
     }
 
     public Meal(Long id, Meal meal) {
-        this.id = id;
-        this.dateTime = meal.dateTime;
-        this.description = meal.description;
-        this.calories = meal.calories;
+        this(id, meal.dateTime, meal.description, meal.calories);
     }
 
     public LocalDateTime getDateTime() {
