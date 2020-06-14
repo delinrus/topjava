@@ -9,6 +9,15 @@
 <ul>
     <li><a href="users">Users</a></li>
     <li><a href="meals">Meals</a></li>
+
+    <form method="get" action=users>
+    <label for="userId">Choose a user:</label>
+    <select onchange="this.form.submit()" name="userId" id="userId">
+        <option value=""></option>
+        <option value="1">User 1</option>
+        <option value="2">User 2</option>
+    </select>
+    </form>
 </ul>
 </body>
 </html>

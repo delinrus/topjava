@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
-    private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
-    private AtomicInteger counter = new AtomicInteger(0);
+    private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     {
         MealsUtil.MEALS.forEach(this::save);
@@ -54,8 +55,14 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
+        return getAll(userId, m -> true);
+    }
+
+    @Override
+    public List<Meal> getAll(int userId, Predicate<Meal> predicate) {
         return repository.values().stream()
                 .filter(meal -> meal.getUserId() == userId)
+                .filter(predicate)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }

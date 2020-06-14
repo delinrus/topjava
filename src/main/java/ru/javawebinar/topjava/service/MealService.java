@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
@@ -34,8 +36,18 @@ public class MealService {
         return repository.getAll(userId);
     }
 
+    public List<Meal> getAll(int userId, LocalDate fromDate, LocalDate toDate) {
+        Predicate<Meal> datePredicate = m -> true;
+        if (fromDate != null) {
+            datePredicate = datePredicate.and(m -> m.getDate().compareTo(fromDate) >= 0);
+        }
+        if (toDate != null) {
+            datePredicate = datePredicate.and(m -> m.getDate().compareTo(toDate) <= 0);
+        }
+        return repository.getAll(userId, datePredicate);
+    }
+
     public void update(Meal meal) {
         checkNotFoundWithId(repository.save(meal), meal.getId());
     }
-
 }
