@@ -25,19 +25,19 @@
     <form method="get" action=meals>
         <dl>
             <dt>From date(inclusive)</dt>
-            <dd><input type="date" value="${fromDate}" name="fromDate" ></dd>
+            <dd><input type="date" value="${param.fromDate}" name="fromDate" ></dd>
         </dl>
         <dl>
             <dt>To date(inclusive):</dt>
-            <dd><input type="date" value="${toDate}" name="toDate" ></dd>
+            <dd><input type="date" value="${param.toDate}" name="toDate" ></dd>
         </dl>
         <dl>
             <dt>From time(inclusive):</dt>
-            <dd><input type="time" value="${fromTime}" name="fromTime" ></dd>
+            <dd><input type="time" value="${param.fromTime}" name="fromTime" ></dd>
         </dl>
         <dl>
             <dt>To time(exclusive):</dt>
-            <dd><input type="time" value="${toTime}" name="toTime" ></dd>
+            <dd><input type="time" value="${param.toTime}" name="toTime" ></dd>
         </dl>
         <br/>
         <button type="submit">Filter</button>

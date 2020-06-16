@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
 public class SecurityUtil {
-    static private final AtomicInteger id = new AtomicInteger(1);
+    static private int userId = 1;
 
     public static int authUserId() {
-        return id.get();
+        return userId;
     }
 
     public static int authUserCaloriesPerDay() {
@@ -16,6 +16,6 @@ public class SecurityUtil {
     }
 
     public static void setAuthUserId(int id) {
-        SecurityUtil.id.set(id);
+        userId = id;
     }
 }

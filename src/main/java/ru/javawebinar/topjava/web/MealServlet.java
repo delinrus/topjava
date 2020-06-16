@@ -13,9 +13,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+
+import static ru.javawebinar.topjava.util.DateTimeUtil.strToDate;
+import static ru.javawebinar.topjava.util.DateTimeUtil.strToTime;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -80,13 +85,11 @@ public class MealServlet extends HttpServlet {
                 String toDateStr = request.getParameter("toDate");
                 String fromTimeStr = request.getParameter("fromTime");
                 String toTimeStr = request.getParameter("toTime");
-
-                request.setAttribute("fromDate", fromDateStr);
-                request.setAttribute("toDate", toDateStr);
-                request.setAttribute("fromTime", fromTimeStr);
-                request.setAttribute("toTime", toTimeStr);
-
-                request.setAttribute("meals", mealRestController.getAll(fromDateStr, toDateStr, fromTimeStr, toTimeStr));
+                LocalDate fromDate = strToDate(fromDateStr);
+                LocalDate toDate = strToDate(toDateStr);
+                LocalTime fromTime = strToTime(fromTimeStr);
+                LocalTime toTime = strToTime(toTimeStr);
+                request.setAttribute("meals", mealRestController.getAll(fromDate, toDate, fromTime, toTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

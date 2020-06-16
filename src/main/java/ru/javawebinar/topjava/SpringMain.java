@@ -21,6 +21,16 @@ public class SpringMain {
             System.out.println("\nMealsList:");
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             mealRestController.getAll().forEach(System.out::println);
+
+            UserRepository userRes = appCtx.getBean(UserRepository.class);
+            userRes.save(new User(null, "Василий", "bpetro@mail.ru", "asdfadsf", Role.USER));
+            userRes.save(new User(null, "Василий", "abpetro@mail.ru", "asdfadsf", Role.USER));
+            userRes.save(new User(null, "Аасилий", "brpetro@mail.ru", "asdfadsf", Role.USER));
+            userRes.save(new User(null, "БВасилий", "bdpetro@mail.ru", "asdfadsf", Role.USER));
+
+            System.out.println("/n/n");
+            userRes.getAll().forEach(System.out::println);
+
         }
     }
 }

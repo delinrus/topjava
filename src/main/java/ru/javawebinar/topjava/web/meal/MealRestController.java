@@ -22,7 +22,7 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @Controller
 public class MealRestController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final MealService service;
 
     @Autowired
@@ -35,13 +35,8 @@ public class MealRestController {
         return getTos(service.getAll(authUserId()), DEFAULT_CALORIES_PER_DAY);
     }
 
-    public List<MealTo> getAll(String fromDateStr, String toDateStr, String fromTimeStr, String toTimeStr) {
+    public List<MealTo> getAll(LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
         log.info("getAll");
-
-        LocalDate fromDate = strToDate(fromDateStr);
-        LocalDate toDate = strToDate(toDateStr);
-        LocalTime fromTime = strToTime(fromTimeStr);
-        LocalTime toTime = strToTime(toTimeStr);
 
         Predicate<Meal> timePredicate = m -> true;
         if (fromTime != null) {
@@ -63,7 +58,7 @@ public class MealRestController {
         log.info("create {}", meal);
         checkNew(meal);
         meal.setUserId(authUserId());
-        return service.create(meal);
+        return service.create(authUserId(), meal);
     }
 
     public void delete(int id) {
@@ -75,6 +70,6 @@ public class MealRestController {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
         meal.setUserId(authUserId());
-        service.update(meal);
+        service.update(authUserId(), meal);
     }
 }

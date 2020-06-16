@@ -4,11 +4,10 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.function.Predicate;
 
 public interface MealRepository {
     // null if not found, when updated
-    Meal save(Meal meal);
+    Meal save(int userId, Meal meal);
 
     // false if not found
     boolean delete(int userId, int id);
@@ -18,5 +17,5 @@ public interface MealRepository {
 
     List<Meal> getAll(int userId);
 
-    List<Meal> getAll(int userId, Predicate<Meal> predicate);
+    List<Meal> getFilteredByDates(int userId, LocalDate fromDate, LocalDate toDate);
 }
