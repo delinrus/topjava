@@ -9,7 +9,25 @@ public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T lt, T startTime, T endTime) {
-        return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
+        boolean result = true;
+        if (startTime != null) {
+            result = lt.compareTo(startTime) >= 0;
+        }
+        if (endTime != null) {
+            result &= lt.compareTo(endTime) < 0;
+        }
+        return result;
+    }
+
+    public static <T extends Comparable<T>> boolean isBetweenClosed(T lt, T startTime, T endTime) {
+        boolean result = true;
+        if (startTime != null) {
+            result = lt.compareTo(startTime) >= 0;
+        }
+        if (endTime != null) {
+            result &= lt.compareTo(endTime) <= 0;
+        }
+        return result;
     }
 
     public static String toString(LocalDateTime ldt) {

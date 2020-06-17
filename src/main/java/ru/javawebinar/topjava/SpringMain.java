@@ -5,6 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
@@ -20,6 +21,11 @@ public class SpringMain {
 
             System.out.println("\nMealsList:");
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
+
+            SecurityUtil.setAuthUserId(2);
+            mealRestController.delete(56783);
+
+
             mealRestController.getAll().forEach(System.out::println);
 
             UserRepository userRes = appCtx.getBean(UserRepository.class);
@@ -27,6 +33,9 @@ public class SpringMain {
             userRes.save(new User(null, "Василий", "abpetro@mail.ru", "asdfadsf", Role.USER));
             userRes.save(new User(null, "Аасилий", "brpetro@mail.ru", "asdfadsf", Role.USER));
             userRes.save(new User(null, "БВасилий", "bdpetro@mail.ru", "asdfadsf", Role.USER));
+
+
+
 
             System.out.println("/n/n");
             userRes.getAll().forEach(System.out::println);

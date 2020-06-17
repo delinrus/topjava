@@ -11,10 +11,7 @@ import ru.javawebinar.topjava.to.MealTo;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.function.Predicate;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.strToDate;
-import static ru.javawebinar.topjava.util.DateTimeUtil.strToTime;
 import static ru.javawebinar.topjava.util.MealsUtil.*;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
@@ -35,18 +32,9 @@ public class MealRestController {
         return getTos(service.getAll(authUserId()), DEFAULT_CALORIES_PER_DAY);
     }
 
-    public List<MealTo> getAll(LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
+    public List<MealTo> getFiltered(LocalDate fromDate, LocalDate toDate, LocalTime fromTime, LocalTime toTime) {
         log.info("getAll");
-
-        Predicate<Meal> timePredicate = m -> true;
-        if (fromTime != null) {
-            timePredicate = timePredicate.and(m -> m.getTime().compareTo(fromTime) >= 0);
-        }
-        if (toTime != null) {
-            timePredicate = timePredicate.and(m -> m.getTime().compareTo(toTime) < 0);
-        }
-
-        return filterByPredicate(service.getAll(authUserId(), fromDate, toDate), DEFAULT_CALORIES_PER_DAY, timePredicate);
+        return getFilteredTos(service.getFilteredByDates(authUserId(), fromDate, toDate), DEFAULT_CALORIES_PER_DAY, fromTime, toTime);
     }
 
     public Meal get(int id) {
@@ -57,7 +45,6 @@ public class MealRestController {
     public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
-        meal.setUserId(authUserId());
         return service.create(authUserId(), meal);
     }
 
@@ -69,7 +56,6 @@ public class MealRestController {
     public void update(Meal meal, int id) {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
-        meal.setUserId(authUserId());
         service.update(authUserId(), meal);
     }
 }

@@ -89,7 +89,7 @@ public class MealServlet extends HttpServlet {
                 LocalDate toDate = strToDate(toDateStr);
                 LocalTime fromTime = strToTime(fromTimeStr);
                 LocalTime toTime = strToTime(toTimeStr);
-                request.setAttribute("meals", mealRestController.getAll(fromDate, toDate, fromTime, toTime));
+                request.setAttribute("meals", mealRestController.getFiltered(fromDate, toDate, fromTime, toTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
