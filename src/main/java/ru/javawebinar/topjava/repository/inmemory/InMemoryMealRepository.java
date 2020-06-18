@@ -19,23 +19,23 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.MEALS.forEach(m -> this.save(m.getUserId(), m));
+        MealsUtil.USER1_MEALS.forEach(m -> this.save(1, m));
+        MealsUtil.USER2_MEALS.forEach(m -> this.save(2, m));
     }
 
     @Override
     public Meal save(int userId, Meal meal) {
-        meal.setUserId(userId);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             repository.computeIfAbsent(userId, HashMap::new).put(meal.getId(), meal);
             return meal;
         }
 
-        try {
-            return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-        } catch (Exception e) {
-            return null;
+        Map<Integer, Meal> map;
+        if ((map = repository.get(userId)) != null ) {
+            return map.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
         }
+        return null;
     }
 
     @Override
@@ -50,10 +50,7 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal get(int userId, int id) {
         Map<Integer, Meal> map;
         if ((map = repository.get(userId)) != null ) {
-            Meal meal = map.get(id);
-            if (meal != null && meal.getUserId() == userId) {
-                return meal;
-            }
+            return map.get(id);
         }
         return null;
     }
@@ -65,7 +62,8 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getFilteredByDates(int userId, LocalDate fromDate, LocalDate toDate) {
-        return getFilteredByPredicate(userId, m -> DateTimeUtil.isBetweenClosed(m.getDate(), fromDate, toDate));
+        LocalDate nextDay = toDate != null ? toDate.plusDays(1) : null;
+        return getFilteredByPredicate(userId, m -> DateTimeUtil.isBetweenHalfOpen(m.getDate(), fromDate, nextDay));
     }
 
     private List<Meal> getFilteredByPredicate(int userId, Predicate<Meal> predicate) {

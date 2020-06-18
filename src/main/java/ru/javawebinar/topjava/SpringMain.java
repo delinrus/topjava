@@ -24,8 +24,6 @@ public class SpringMain {
 
             SecurityUtil.setAuthUserId(2);
             mealRestController.delete(56783);
-
-
             mealRestController.getAll().forEach(System.out::println);
 
             UserRepository userRes = appCtx.getBean(UserRepository.class);
@@ -33,13 +31,8 @@ public class SpringMain {
             userRes.save(new User(null, "Василий", "abpetro@mail.ru", "asdfadsf", Role.USER));
             userRes.save(new User(null, "Аасилий", "brpetro@mail.ru", "asdfadsf", Role.USER));
             userRes.save(new User(null, "БВасилий", "bdpetro@mail.ru", "asdfadsf", Role.USER));
-
-
-
-
             System.out.println("/n/n");
             userRes.getAll().forEach(System.out::println);
-
         }
     }
 }
