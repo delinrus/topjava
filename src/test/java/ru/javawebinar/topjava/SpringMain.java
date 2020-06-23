@@ -4,11 +4,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.jdbc.JdbcMealRepository;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
@@ -17,10 +19,10 @@ import java.util.List;
 public class SpringMain {
     public static void main(String[] args) {
         // java 7 automatic resource management
-        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
+        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
-            adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
+            adminUserController.create(new User(null, "userName", "email1@mail.ru", "password", Role.ADMIN));
             System.out.println();
 
             MealRestController mealController = appCtx.getBean(MealRestController.class);
@@ -31,6 +33,10 @@ public class SpringMain {
             filteredMealsWithExcess.forEach(System.out::println);
             System.out.println();
             System.out.println(mealController.getBetween(null, null, null, null));
+
+//            JdbcMealRepository bean = appCtx.getBean(JdbcMealRepository.class);
+//            bean.getBetweenHalfOpen( LocalDateTime.of(2020, 1, 25, 0, 0),  LocalDateTime.of(2021, 1, 25, 0, 0), 100001).stream()
+//                    .forEach(System.out::println);
         }
     }
 }
