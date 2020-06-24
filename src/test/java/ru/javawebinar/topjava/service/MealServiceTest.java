@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -17,10 +15,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
@@ -66,23 +61,19 @@ public class MealServiceTest {
         final LocalDate endDate = LocalDate.of(2020, 1, 31);
 
         List<Meal> list = service.getBetweenInclusive(startDate, endDate, USER_ID);
-        assertMatch(list, USER_MEALS.stream()
-                .filter(meal -> meal.getDate().compareTo(startDate) >= 0)
-                .filter(meal -> meal.getDate().compareTo(endDate) <= 0)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList()));
+        assertMatch(list, MEALS_OF_USER_BETWEEN_30_31_INCLUSIVE_SORTED);
     }
 
     @Test
     public void getBetweenInclusiveNullDates() {
         List<Meal> list = service.getBetweenInclusive(null, null, USER_ID);
-        assertMatch(list, USER_MEALS.stream().sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList()));
+        assertMatch(list, ALL_MEALS_OF_USER_SORTED);
     }
 
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(USER_ID);
-        assertMatch(all, USER_MEALS.stream().sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList()));
+        assertMatch(all, ALL_MEALS_OF_USER_SORTED);
     }
 
     @Test
@@ -114,7 +105,7 @@ public class MealServiceTest {
 
     @Test
     public void updateSomebodyElesesMeal() {
-        assertThrows(NotFoundException.class, () ->  {
+        assertThrows(NotFoundException.class, () -> {
             Meal updated = getUpdated();
             service.update(updated, ADMIN_ID);
         });
@@ -132,7 +123,7 @@ public class MealServiceTest {
 
     @Test
     public void updateNotFound() {
-        assertThrows(NotFoundException.class, () ->  {
+        assertThrows(NotFoundException.class, () -> {
             Meal updated = getUpdated();
             updated.setId(NOT_FOUND);
             service.update(updated, USER_ID);
