@@ -1,13 +1,12 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.ClassRule;
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -21,6 +20,7 @@ import java.time.Month;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
+import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -33,26 +33,30 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger("");
+    private static final Logger log = getLogger("");
+
+    private static final StringBuilder results = new StringBuilder();
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
             String testName = description.getMethodName();
-            log.info(String.format("Test %s finished, spent %d microseconds",
-                    testName, TimeUnit.NANOSECONDS.toMicros(nanos)));
+            String result = String.format("\n%-25s %7d",
+                    testName, TimeUnit.NANOSECONDS.toMillis(nanos));
+            results.append(result);
+            log.info(result + " ms\n");
         }
     };
 
-    @ClassRule
-    public static Stopwatch classStopwatch = new Stopwatch() {
-        @Override
-        protected void finished(long nanos, Description description) {
-            String className = description.getClassName();
-            log.info(String.format("Test class %s finished in %d microseconds", className, TimeUnit.NANOSECONDS.toMicros(nanos)));
-        }
-    };
+    @AfterClass
+    public static void printResult() {
+        log.info("\n--------------------------------------" +
+                "\n Test                     Duration, ms" +
+                "\n--------------------------------------" +
+                results +
+                "\n--------------------------------------");
+    }
 
     @Autowired
     private MealService service;
