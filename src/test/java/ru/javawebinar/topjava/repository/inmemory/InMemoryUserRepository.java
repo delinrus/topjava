@@ -30,6 +30,11 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
     }
 
     @Override
+    public User getWithMeals(int id) {
+        return null;
+    }
+
+    @Override
     public User getByEmail(String email) {
         return getCollection().stream()
                 .filter(u -> email.equals(u.getEmail()))

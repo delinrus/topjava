@@ -3,16 +3,20 @@ package ru.javawebinar.topjava.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
 
 import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.MealTestData.NOT_FOUND;
+import static ru.javawebinar.topjava.MealTestData.getNew;
+import static ru.javawebinar.topjava.MealTestData.getUpdated;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 
 public class MealServiceTest extends BaseServiceTest {
@@ -91,5 +95,20 @@ public class MealServiceTest extends BaseServiceTest {
     @Test
     public void getBetweenWithNullDates() throws Exception {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), MEALS);
+    }
+
+    @Test
+    @Transactional
+    public void getWithUserTransactional() throws Exception {
+        Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
+        MEAL_MATCHER.assertMatch(actual, ADMIN_MEAL1);
+        USER_MATCHER.assertMatch(new User(actual.getUser()), ADMIN);
+    }
+
+    @Test
+    public void getWithUser() throws Exception {
+        Meal actual = service.getWithUser(ADMIN_MEAL_ID, ADMIN_ID);
+        MEAL_MATCHER.assertMatch(actual, ADMIN_MEAL1);
+        USER_MATCHER.assertMatch(actual.getUser(), ADMIN);
     }
 }

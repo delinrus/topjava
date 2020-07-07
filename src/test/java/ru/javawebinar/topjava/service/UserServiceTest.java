@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
+import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -12,6 +14,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 
@@ -84,4 +87,20 @@ public class UserServiceTest extends BaseServiceTest {
         List<User> all = service.getAll();
         USER_MATCHER.assertMatch(all, ADMIN, USER);
     }
+
+    @Test
+    @Transactional
+    public void getWithMealsTransactional() throws Exception {
+        User user = service.get(USER_ID);
+        USER_MATCHER.assertMatch(user, USER);
+        MEAL_MATCHER.assertMatch(user.getMeals(), MealTestData.MEALS);
+    }
+
+    @Test
+    public void getWithMealsQuery() throws Exception {
+        User user = service.getWithMeals(USER_ID);
+        USER_MATCHER.assertMatch(user, USER);
+        MEAL_MATCHER.assertMatch(user.getMeals(), MealTestData.MEALS);
+    }
+
 }
