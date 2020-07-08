@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
-import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -18,7 +17,7 @@ import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 
-public class UserServiceTest extends BaseServiceTest {
+public abstract class UserServiceTest extends BaseServiceTest {
 
     @Autowired
     private UserService service;
@@ -89,18 +88,9 @@ public class UserServiceTest extends BaseServiceTest {
     }
 
     @Test
-    @Transactional
-    public void getWithMealsTransactional() throws Exception {
-        User user = service.get(USER_ID);
-        USER_MATCHER.assertMatch(user, USER);
-        MEAL_MATCHER.assertMatch(user.getMeals(), MealTestData.MEALS);
-    }
-
-    @Test
     public void getWithMealsQuery() throws Exception {
         User user = service.getWithMeals(USER_ID);
         USER_MATCHER.assertMatch(user, USER);
         MEAL_MATCHER.assertMatch(user.getMeals(), MealTestData.MEALS);
     }
-
 }
