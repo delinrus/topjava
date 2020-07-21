@@ -1,12 +1,12 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.service.MealService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -21,10 +21,11 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
 @RequestMapping(value = "/meals")
-public class JspMealController {
+public class JspMealController extends AbstractMealController {
 
-    @Autowired
-    private MealRestController mealController;
+    public JspMealController(MealService service) {
+        super(service);
+    }
 
     @PostMapping
     public String saveMeal(HttpServletRequest request) throws UnsupportedEncodingException {
@@ -35,45 +36,48 @@ public class JspMealController {
                 Integer.parseInt(request.getParameter("calories")));
 
         if (StringUtils.isEmpty(request.getParameter("id"))) {
-            mealController.create(meal);
+            create(meal);
         } else {
-            mealController.update(meal, getId(request));
+            update(meal, getId(request));
         }
         return "redirect:meals";
     }
 
+    @GetMapping("/delete")
+    public String deleteMeal(HttpServletRequest request) {
+        int id = getId(request);
+        delete(id);
+        return "redirect:/meals";
+    }
+
+    @GetMapping("/update")
+    public String updateMeal(HttpServletRequest request) {
+        final Meal meal = get(getId(request));
+        request.setAttribute("meal", meal);
+        return "mealForm";
+    }
+
+    @GetMapping("/create")
+    public String createMeal(HttpServletRequest request) {
+        final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
+        request.setAttribute("meal", meal);
+        return "mealForm";
+    }
+
+    @GetMapping("/filter")
+    public String filterMeal(HttpServletRequest request) {
+        LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
+        LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
+        LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
+        LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
+        request.setAttribute("meals", getBetween(startDate, startTime, endDate, endTime));
+        return "meals";
+    }
 
     @GetMapping()
     public String getMeals(HttpServletRequest request) {
-
-        String action = request.getParameter("action");
-
-        switch (action == null ? "all" : action) {
-            case "delete" -> {
-                int id = getId(request);
-                mealController.delete(id);
-                return "redirect:meals";
-            }
-            case "create", "update" -> {
-                final Meal meal = "create".equals(action) ?
-                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        mealController.get(getId(request));
-                request.setAttribute("meal", meal);
-                return "mealForm";
-            }
-            case "filter" -> {
-                LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
-                LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
-                LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
-                LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
-                request.setAttribute("meals", mealController.getBetween(startDate, startTime, endDate, endTime));
-                return "meals";
-            }
-            default -> {
-                request.setAttribute("meals", mealController.getAll());
-                return "meals";
-            }
-        }
+        request.setAttribute("meals", getAll());
+        return "meals";
     }
 
 
@@ -82,13 +86,3 @@ public class JspMealController {
         return Integer.parseInt(paramId);
     }
 }
-
-
-//1.3 Перенести функциональность MealServlet в JspMealController контроллер (по аналогии с RootController).
-// MealRestController у нас останется, с ним будем работать позже.
-//        1.3.1 разнести запросы на update/delete/.. по разным методам (попробуйте вообще без action=).
-//        Можно по аналогии с RootController#setUser принимать HttpServletRequest request (аннотации на
-//        параметры и адаптеры для LocalDate/Time мы введем позже).
-//        1.3.2 в одном контроллере нельзя использовать другой. Чтобы не дублировать код, можно сделать
-//        наследование контроллеров от абстрактного класса.
-//        1.3.3 добавить локализацию и jsp:include в mealForm.jsp / meals.jsp
