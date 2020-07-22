@@ -28,7 +28,7 @@ public class JspMealController extends AbstractMealController {
     }
 
     @PostMapping
-    public String saveMeal(HttpServletRequest request) throws UnsupportedEncodingException {
+    public String save(HttpServletRequest request) throws UnsupportedEncodingException {
         request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
@@ -44,28 +44,28 @@ public class JspMealController extends AbstractMealController {
     }
 
     @GetMapping("/delete")
-    public String deleteMeal(HttpServletRequest request) {
+    public String delete(HttpServletRequest request) {
         int id = getId(request);
         delete(id);
         return "redirect:/meals";
     }
 
     @GetMapping("/update")
-    public String updateMeal(HttpServletRequest request) {
+    public String update(HttpServletRequest request) {
         final Meal meal = get(getId(request));
         request.setAttribute("meal", meal);
         return "mealForm";
     }
 
     @GetMapping("/create")
-    public String createMeal(HttpServletRequest request) {
+    public String create(HttpServletRequest request) {
         final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         request.setAttribute("meal", meal);
         return "mealForm";
     }
 
     @GetMapping("/filter")
-    public String filterMeal(HttpServletRequest request) {
+    public String filter(HttpServletRequest request) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
@@ -75,7 +75,7 @@ public class JspMealController extends AbstractMealController {
     }
 
     @GetMapping()
-    public String getMeals(HttpServletRequest request) {
+    public String get(HttpServletRequest request) {
         request.setAttribute("meals", getAll());
         return "meals";
     }
