@@ -48,8 +48,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void delete() throws Exception {
-        service.delete(USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
+        service.delete(ADMIN_ID);
+        assertThrows(NotFoundException.class, () -> service.get(ADMIN_ID));
     }
 
     @Test
@@ -59,8 +59,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void get() throws Exception {
-        User user = service.get(USER_ID);
-        USER_MATCHER.assertMatch(user, USER);
+        User user = service.get(ADMIN_ID);
+        USER_MATCHER.assertMatch(user, ADMIN);
     }
 
     @Test

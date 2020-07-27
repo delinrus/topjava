@@ -29,4 +29,8 @@
         <appender-ref ref="console"/>
     </root>
 
+    <logger name="org.springframework.transaction" level="TRACE">
+        <appender-ref ref="spring-t" />
+    </logger>
+
 </configuration>

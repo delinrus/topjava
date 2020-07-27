@@ -111,8 +111,8 @@ public class JdbcUserRepository implements UserRepository {
         List<User> users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
         Map<Integer, Set<Role>> map = new HashMap<>();
         jdbcTemplate.query("SELECT * FROM user_roles", rs -> {
-            map.computeIfAbsent(rs.getInt("user_id"), id -> new HashSet<>());
-            map.get(rs.getInt("user_id")).add(Role.valueOf(rs.getString("role")));
+            map.computeIfAbsent(rs.getInt("user_id"), id -> new HashSet<>())
+                    .add(Role.valueOf(rs.getString("role")));
         });
         users.forEach(user -> user.setRoles(map.get(user.getId())));
         return users;
