@@ -1,13 +1,16 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.MealTestData;
+import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -56,7 +59,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(MEALS, authUserCaloriesPerDay())));
+                .andExpect(result -> Assertions.assertEquals(TestUtil.readListFromJsonMvcResult(result, MealTo.class), MealsUtil.getTos(MEALS, authUserCaloriesPerDay())));
     }
 
     @Test
@@ -91,6 +94,18 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson((List.of(createTo(MEAL6, true), createTo(MEAL5, true)))));
+                .andExpect(result -> Assertions.assertEquals(TestUtil.readListFromJsonMvcResult(result, MealTo.class),
+                        (List.of(createTo(MEAL6, true), createTo(MEAL5, true)))));
+    }
+
+    @Test
+    void getBetweenWithNullParameters() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+            .param("startDate", ""))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(result -> Assertions.assertEquals(TestUtil.readListFromJsonMvcResult(result, MealTo.class),
+                        (MealsUtil.getTos(MEALS, authUserCaloriesPerDay()))));
     }
 }
