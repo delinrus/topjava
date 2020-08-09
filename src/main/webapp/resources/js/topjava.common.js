@@ -5,7 +5,7 @@ function makeEditable(ctx) {
     form = $('#detailsForm');
     $(".delete").click(function () {
         if (confirm('Are you sure?')) {
-            deleteRow($(this).attr("id"));
+            deleteRow($(this).parents("tr").attr("id"));
         }
     });
 
@@ -20,6 +20,10 @@ function makeEditable(ctx) {
 function add() {
     form.find(":input").val("");
     $("#editRow").modal();
+}
+
+function foo1() {
+    alert("Hi max");
 }
 
 function deleteRow(id) {
