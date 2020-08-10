@@ -1,4 +1,3 @@
-// $(document).ready(function () {
 $(function () {
     makeEditable({
             ajaxUrl: "profile/meals/",
@@ -27,7 +26,7 @@ $(function () {
                 "order": [
                     [
                         0,
-                        "asc"
+                        "desc"
                     ]
                 ]
             })
@@ -35,8 +34,10 @@ $(function () {
     );
 });
 
-
-
-function foo() {
-    alert("Hi meal");
+function filterByDateTime() {
+    $.ajax({
+        type: "GET",
+        url: "profile/meals/filter",
+        data: $("#filterForm").serialize()
+    }).done(updateDataTable);
 }

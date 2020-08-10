@@ -22,10 +22,6 @@ function add() {
     $("#editRow").modal();
 }
 
-function foo1() {
-    alert("Hi max");
-}
-
 function deleteRow(id) {
     $.ajax({
         url: context.ajaxUrl + id,
@@ -40,6 +36,10 @@ function updateTable() {
     $.get(context.ajaxUrl, function (data) {
         context.datatableApi.clear().rows.add(data).draw();
     });
+}
+
+function updateDataTable(data) {
+    context.datatableApi.clear().rows.add(data).draw();
 }
 
 function save() {
