@@ -41,3 +41,8 @@ function filterByDateTime() {
         data: $("#filterForm").serialize()
     }).done(updateDataTable);
 }
+
+function clearFilter() {
+    $("#filterForm")[0].reset();
+    updateTable();
+}
