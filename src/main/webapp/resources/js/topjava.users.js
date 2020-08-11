@@ -40,3 +40,15 @@ $(function () {
         }
     );
 });
+
+function changeEnabled(checked, id) {
+    console.log(`${id} = ${checked}`);
+    $.ajax({
+        type: "POST",
+        url: "admin/users/enabled" ,
+        data: jQuery.param({"id": id, "enabled": checked })
+    }).done(function () {
+        updateTable();
+        successNoty("Saved");
+    });
+}
