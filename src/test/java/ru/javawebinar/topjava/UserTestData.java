@@ -27,6 +27,7 @@ public class UserTestData {
 
     public static final User USER = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
     public static final User ADMIN = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN, Role.USER);
+    public static final User UNAUTHORISED = new User(NOT_FOUND, "Unauthorised", "foo", "foo", Role.ADMIN, Role.USER);
 
     static {
         USER.setMeals(MEALS);

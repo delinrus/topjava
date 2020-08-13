@@ -40,6 +40,9 @@ public class DateTimeUtil {
     }
 
     public static @Nullable LocalDateTime parseLocalDateTime(@Nullable String str) {
-        return StringUtils.isEmpty(str) ? null : LocalDateTime.parse(str);
+        // Format "2020-08-18 21:00" from datetimepicker to "2020-08-18T21:00"
+        String modifiedStr = str.trim().replace(" ", "T");
+
+        return StringUtils.isEmpty(modifiedStr) ? null : LocalDateTime.parse(modifiedStr);
     }
 }

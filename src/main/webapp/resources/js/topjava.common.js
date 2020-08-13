@@ -44,6 +44,8 @@ function updateTableByData(data) {
 }
 
 function save() {
+    console.log(form.serialize());
+
     $.ajax({
         type: "POST",
         url: context.ajaxUrl,
