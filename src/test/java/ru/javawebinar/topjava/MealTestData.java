@@ -29,6 +29,8 @@ public class MealTestData {
 
     public static final List<Meal> MEALS = List.of(MEAL7, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
 
+    public static final Meal NOT_VALID_MEAL = new Meal(null, of(2020, Month.JANUARY, 31, 20, 0), "", 1);
+
     public static Meal getNew() {
         return new Meal(null, of(2020, Month.FEBRUARY, 1, 18, 0), "Созданный ужин", 300);
     }
